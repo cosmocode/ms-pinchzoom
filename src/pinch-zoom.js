@@ -461,8 +461,8 @@ var definePinchZoom = function () {
          */
         getTouches: function (event) {
             var rect = this.container.getBoundingClientRect();
-            var posTop = rect.top + document.body.scrollTop;
-            var posLeft = rect.left + document.body.scrollLeft;
+            var posTop = rect.top + document.documentElement.scrollTop;
+            var posLeft = rect.left + document.documentElement.scrollLeft;
 
             return Array.prototype.slice.call(event.touches).map(function (touch) {
                 return {
