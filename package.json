@@ -24,10 +24,16 @@
   ],
   "devDependencies": {
     "babel-cli": "~6.26.0",
-    "babel-preset-env": "~1.6.1"
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "~1.6.1",
+    "eslint-loader": "^1.9.0",
+    "webpack": "^3.10.0",
+    "webpack-merge": "^4.1.1"
   },
   "scripts": {
-    "build": "script/build.sh",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "dev": "webpack -d --progress --config webpack.dev.js",
+    "watch": "webpack -dw --progress --config webpack.dev.js",
+    "build": "webpack -p --progress --config webpack.prod.js"
   }
 }
