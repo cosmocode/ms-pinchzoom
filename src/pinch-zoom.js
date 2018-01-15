@@ -22,6 +22,8 @@
 
 */
 
+import getCurrentZoomCenter from './util';
+
 // polyfills
 if (typeof Object.assign != 'function') {
   // Must be writable: true, enumerable: false, configurable: true
@@ -89,6 +91,10 @@ var definePinchZoom = function () {
             this.offset = {
                 x: 0,
                 y: 0
+            };
+            this.initialOffset = {
+                x: 0,
+                y: 0,
             };
             this.options = Object.assign({}, this.defaults, options);
             this.setupMarkup();
@@ -424,30 +430,7 @@ var definePinchZoom = function () {
          * @return {Object} the current zoom center
          */
         getCurrentZoomCenter: function () {
-
-            // uses following formula to calculate the zoom center x value
-            // offset_left / offset_right = zoomcenter_x / (container_x - zoomcenter_x)
-            var length = this.container.offsetWidth * this.zoomFactor,
-                offsetLeft  = this.offset.x,
-                offsetRight = length - offsetLeft - this.container.offsetWidth,
-                widthOffsetRatio = offsetLeft / offsetRight,
-                centerX = widthOffsetRatio * this.container.offsetWidth / (widthOffsetRatio + 1),
-
-            // the same for the zoomcenter y
-                height = this.container.offsetHeight * this.zoomFactor,
-                offsetTop  = this.offset.y,
-                offsetBottom = height - offsetTop - this.container.offsetHeight,
-                heightOffsetRatio = offsetTop / offsetBottom,
-                centerY = heightOffsetRatio * this.container.offsetHeight / (heightOffsetRatio + 1);
-
-            // prevents division by zero
-            if (offsetRight === 0) { centerX = this.container.offsetWidth; }
-            if (offsetBottom === 0) { centerY = this.container.offsetHeight; }
-
-            return {
-                x: centerX,
-                y: centerY
-            };
+            return getCurrentZoomCenter(this.offset, this.initialOffset, this.zoomFactor);
         },
 
         canDrag: function () {
@@ -581,7 +564,7 @@ var definePinchZoom = function () {
         /**
          * Updates the css values according to the current zoom factor and offset
          */
-        update: function () {
+        update: function (event) {
             if (this.updatePlaned) {
                 return;
             }
@@ -591,8 +574,16 @@ var definePinchZoom = function () {
                 this.updatePlaned = false;
                 this.updateAspectRatio();
 
-                var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
-                    offsetX = -this.offset.x / zoomFactor,
+                var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor;
+                if (event && event.type === 'load') {
+                    this.initialOffset = {
+                        x: -Math.abs(this.el.offsetWidth * zoomFactor - this.container.offsetWidth) / 2,
+                        y: -Math.abs(this.el.offsetHeight * zoomFactor - this.container.offsetHeight) / 2,
+                    };
+                    this.addOffset(this.initialOffset);
+                }
+
+                var offsetX = -this.offset.x / zoomFactor,
                     offsetY = -this.offset.y / zoomFactor,
                     transform3d =   'scale3d('     + zoomFactor + ', '  + zoomFactor + ',1) ' +
                         'translate3d(' + offsetX    + 'px,' + offsetY    + 'px,0px)',
@@ -798,5 +789,7 @@ var definePinchZoom = function () {
 };
 
 var PinchZoom = definePinchZoom();
+
+window.PinchZoom = PinchZoom;
 
 export default PinchZoom;
