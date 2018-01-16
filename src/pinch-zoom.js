@@ -222,6 +222,18 @@ var definePinchZoom = function () {
         },
 
         /**
+         * Compute the initial offset
+         *
+         * the element should be centered in the container upon initialization
+         */
+        computeInitialOffset: function () {
+            this.initialOffset = {
+                x: -Math.abs(this.el.offsetWidth * this.getInitialZoomFactor() - this.container.offsetWidth) / 2,
+                y: -Math.abs(this.el.offsetHeight * this.getInitialZoomFactor() - this.container.offsetHeight) / 2,
+            };
+        },
+
+        /**
          * Max / min values for the offset
          * @param offset
          * @return {Object} the sanitized offset
@@ -573,16 +585,18 @@ var definePinchZoom = function () {
                 this.updatePlaned = false;
                 this.updateAspectRatio();
 
-                var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor;
-                if (event && event.type === 'load') {
-                    this.initialOffset = {
-                        x: -Math.abs(this.el.offsetWidth * zoomFactor - this.container.offsetWidth) / 2,
-                        y: -Math.abs(this.el.offsetHeight * zoomFactor - this.container.offsetHeight) / 2,
-                    };
-                    this.addOffset(this.initialOffset);
-                }
 
-                var offsetX = -this.offset.x / zoomFactor,
+                if (event && event.type === 'resize') {
+                    this.computeInitialOffset();
+                }
+                if (event && event.type === 'load') {
+                    this.computeInitialOffset();
+                    this.zoomFactor = 1;
+                    this.offset.x = this.initialOffset.x;
+                    this.offset.y = this.initialOffset.y;
+                }
+                var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
+                    offsetX = -this.offset.x / zoomFactor,
                     offsetY = -this.offset.y / zoomFactor,
                     transform3d =   'scale3d('     + zoomFactor + ', '  + zoomFactor + ',1) ' +
                         'translate3d(' + offsetX    + 'px,' + offsetY    + 'px,0px)',
