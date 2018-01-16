@@ -213,6 +213,7 @@ var definePinchZoom = function () {
             if (this.hasInteraction) {
                 return;
             }
+            this.isDoubleTab = true;
             if (startZoomFactor > zoomFactor) {
                 center = this.getCurrentZoomCenter();
             }
@@ -747,6 +748,8 @@ var definePinchZoom = function () {
                             target.handleDragEnd(event);
                             break;
                     }
+                } else {
+                    target.isDoubleTab = false;
                 }
 
                 if (fingers === 1) {
@@ -764,7 +767,7 @@ var definePinchZoom = function () {
         });
 
         el.addEventListener('touchmove', function (event) {
-            if(target.enabled) {
+            if(target.enabled && !target.isDoubleTab) {
                 if (firstMove) {
                     updateInteraction(event);
                     if (interaction) {
