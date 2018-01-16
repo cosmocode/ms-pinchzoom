@@ -97,6 +97,7 @@ var definePinchZoom = function () {
                 y: 0,
             };
             this.options = Object.assign({}, this.defaults, options);
+            this.isInitialUpdate = true;
             this.setupMarkup();
             this.bindEvents();
             this.update();
@@ -586,11 +587,11 @@ var definePinchZoom = function () {
                 this.updatePlaned = false;
                 this.updateAspectRatio();
 
-
                 if (event && event.type === 'resize') {
                     this.computeInitialOffset();
                 }
-                if (event && event.type === 'load') {
+                if (event && event.type === 'load' || this.isInitialUpdate) {
+                    this.isInitialUpdate = false;
                     this.computeInitialOffset();
                     this.zoomFactor = 1;
                     this.offset.x = this.initialOffset.x;
