@@ -1,15 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Pinchzoom.js Demo</title>
 
     <style type="text/css">
-        div.pinch-zoom,
-        div.pinch-zoom img {
-            width: 100%;
-            -webkit-user-drag: none;
-        }
-
         .landscape {
             width: 500px;
             height: 300px;
@@ -28,6 +23,14 @@
             float: left;
         }
 
+        .switch {
+            width: 90vw;
+            height: 90vh;
+            overflow: hidden;
+            border: purple 1px solid;
+            margin: 1em;
+            float: left;
+        }
     </style>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -66,12 +69,19 @@
     </div>
 </div>
 
+<div class="switch">
+    <div class="zoom5">
+        <img src="https://placekitten.com/1200/600"/>
+        <p>should also zoom</p>
+    </div>
+</div>
 
 <script type="text/javascript">
-    new window.PinchZoom(document.querySelector('div.zoom1'), {});
-    new window.PinchZoom(document.querySelector('div.zoom2'), { useParentContainerDimensions: true,});
+    new window.PinchZoom(document.querySelector('div.zoom1'), {verticalSpace:20, horizontalSpace: 30});
+    new window.PinchZoom(document.querySelector('div.zoom2'), {});
     new window.PinchZoom(document.querySelector('div.zoom3'), {});
-    new window.PinchZoom(document.querySelector('div.zoom4'), {useParentContainerDimensions: true,});
+    new window.PinchZoom(document.querySelector('div.zoom4'), {});
+    new window.PinchZoom(document.querySelector('div.zoom5'), {});
 </script>
 
 </body>
