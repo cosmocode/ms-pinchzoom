@@ -121,7 +121,6 @@ var definePinchZoom = function () {
             minZoom: 0.5,
             lockDragAxis: false,
             use2d: true,
-            useParentContainerDimensions: false,
             zoomStartEventName: 'pz_zoomstart',
             zoomEndEventName: 'pz_zoomend',
             dragStartEventName: 'pz_dragstart',
@@ -403,11 +402,7 @@ var definePinchZoom = function () {
          * Updates the aspect ratio
          */
         updateAspectRatio: function () {
-            if (this.options.useParentContainerDimensions) {
-                this.setContainerY(this.container.parentElement.offsetHeight);
-            } else {
-                this.setContainerY(this.getContainerX() / this.getAspectRatio());
-            }
+            this.setContainerY(this.container.parentElement.offsetHeight);
         },
 
         /**
