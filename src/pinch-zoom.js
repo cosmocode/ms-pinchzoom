@@ -148,12 +148,10 @@ var definePinchZoom = function () {
          * @param event
          */
         handleDrag: function (event) {
-            if (this.zoomFactor > 1.0) {
-                var touch = this.getTouches(event)[0];
-                this.drag(touch, this.lastDragPosition);
-                this.offset = this.sanitizeOffset(this.offset);
-                this.lastDragPosition = touch;
-            }
+            var touch = this.getTouches(event)[0];
+            this.drag(touch, this.lastDragPosition);
+            this.offset = this.sanitizeOffset(this.offset);
+            this.lastDragPosition = touch;
         },
 
         handleDragEnd: function () {
@@ -398,6 +396,9 @@ var definePinchZoom = function () {
          * (no offset and zoom factor 1)
          */
         zoomOutAnimation: function () {
+            if (this.zoomFactor === 1) {
+                return;
+            }
             var startZoomFactor = this.zoomFactor,
                 zoomFactor = 1,
                 center = this.getCurrentZoomCenter(),
@@ -444,10 +445,6 @@ var definePinchZoom = function () {
          */
         getCurrentZoomCenter: function () {
             return getCurrentZoomCenter(this.offset, this.initialOffset, this.zoomFactor);
-        },
-
-        canDrag: function () {
-            return !isCloseTo(this.zoomFactor, 1);
         },
 
         /**
@@ -696,7 +693,7 @@ var definePinchZoom = function () {
             updateInteraction = function (event) {
                 if (fingers === 2) {
                     setInteraction('zoom');
-                } else if (fingers === 1 && target.canDrag()) {
+                } else if (fingers === 1) {
                     setInteraction('drag', event);
                 } else {
                     setInteraction(null, event);
