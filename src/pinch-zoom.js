@@ -127,8 +127,8 @@ var definePinchZoom = function () {
             dragStartEventName: 'pz_dragstart',
             dragEndEventName: 'pz_dragend',
             doubleTapEventName: 'pz_doubletap',
-            verticalSpace: 0,
-            horizontalSpace: 0,
+            verticalPadding: 0,
+            horizontalPadding: 0,
         },
 
         /**
@@ -243,12 +243,12 @@ var definePinchZoom = function () {
         sanitizeOffset: function (offset) {
             var elWidth = this.el.offsetWidth * this.getInitialZoomFactor() * this.zoomFactor;
             var elHeight = this.el.offsetHeight * this.getInitialZoomFactor() * this.zoomFactor;
-            var maxX = elWidth - this.getContainerX() + this.options.horizontalSpace,
-                maxY = elHeight -  this.getContainerY() + this.options.verticalSpace,
+            var maxX = elWidth - this.getContainerX() + this.options.horizontalPadding,
+                maxY = elHeight -  this.getContainerY() + this.options.verticalPadding,
                 maxOffsetX = Math.max(maxX, 0),
                 maxOffsetY = Math.max(maxY, 0),
-                minOffsetX = Math.min(maxX, 0) - this.options.horizontalSpace,
-                minOffsetY = Math.min(maxY, 0) - this.options.verticalSpace;
+                minOffsetX = Math.min(maxX, 0) - this.options.horizontalPadding,
+                minOffsetY = Math.min(maxY, 0) - this.options.verticalPadding;
 
             return {
                 x: Math.min(Math.max(offset.x, minOffsetX), maxOffsetX),
