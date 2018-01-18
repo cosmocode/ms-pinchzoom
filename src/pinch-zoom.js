@@ -589,12 +589,22 @@ var definePinchZoom = function () {
                 if (event && event.type === 'resize') {
                     this.computeInitialOffset();
                 }
-                if (event && event.type === 'load' || this.isInitialUpdate) {
+
+                if (this.isInitialUpdate) {
                     this.isInitialUpdate = false;
                     this.computeInitialOffset();
-                    this.zoomFactor = 1;
                     this.offset.x = this.initialOffset.x;
                     this.offset.y = this.initialOffset.y;
+                    this.timeInitialised = Date.now();
+                }
+
+                if (event && event.type === 'load') {
+                    this.computeInitialOffset();
+                    var imageLoadTime = Date.now();
+                    if (imageLoadTime - this.timeInitialised < 2000) {
+                        this.offset.x = this.initialOffset.x;
+                        this.offset.y = this.initialOffset.y;
+                    }
                 }
                 var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
                     offsetX = -this.offset.x / zoomFactor,
