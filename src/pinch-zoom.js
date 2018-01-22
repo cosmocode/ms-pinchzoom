@@ -22,6 +22,8 @@
 
 */
 
+import getCurrentZoomCenter from './util';
+
 // polyfills
 if (typeof Object.assign != 'function') {
   // Must be writable: true, enumerable: false, configurable: true
@@ -442,16 +444,7 @@ var definePinchZoom = function () {
          * @return {Object} the current zoom center
          */
         getCurrentZoomCenter: function () {
-            const offsetLeft = this.offset.x - this.initialOffset.x;
-            const centerX = -1 * this.offset.x - offsetLeft / (1 / this.zoomFactor - 1);
-
-            const offsetTop = this.offset.y - this.initialOffset.y;
-            const centerY = -1 * this.offset.y - offsetTop / (1 / this.zoomFactor - 1);
-
-            return {
-                x: centerX,
-                y: centerY
-            };
+            return getCurrentZoomCenter(this.offset, this.initialOffset, this.zoomFactor);
         },
 
         /**
@@ -822,5 +815,7 @@ var definePinchZoom = function () {
 };
 
 var PinchZoom = definePinchZoom();
+
+window.PinchZoom = PinchZoom;
 
 export default PinchZoom;
