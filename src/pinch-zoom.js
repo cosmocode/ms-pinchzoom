@@ -124,7 +124,9 @@ var definePinchZoom = function () {
             zoomEndEventName: 'pz_zoomend',
             dragStartEventName: 'pz_dragstart',
             dragEndEventName: 'pz_dragend',
-            doubleTapEventName: 'pz_doubletap'
+            doubleTapEventName: 'pz_doubletap',
+            verticalPadding: 0,
+            horizontalPadding: 0,
         },
 
         /**
@@ -144,12 +146,10 @@ var definePinchZoom = function () {
          * @param event
          */
         handleDrag: function (event) {
-            if (this.zoomFactor > 1.0) {
-                var touch = this.getTouches(event)[0];
-                this.drag(touch, this.lastDragPosition);
-                this.offset = this.sanitizeOffset(this.offset);
-                this.lastDragPosition = touch;
-            }
+            var touch = this.getTouches(event)[0];
+            this.drag(touch, this.lastDragPosition);
+            this.offset = this.sanitizeOffset(this.offset);
+            this.lastDragPosition = touch;
         },
 
         handleDragEnd: function () {
@@ -237,12 +237,14 @@ var definePinchZoom = function () {
          * @return {Object} the sanitized offset
          */
         sanitizeOffset: function (offset) {
-            var maxX = (this.zoomFactor - 1) * this.getContainerX(),
-                maxY = (this.zoomFactor - 1) * this.getContainerY(),
+            var elWidth = this.el.offsetWidth * this.getInitialZoomFactor() * this.zoomFactor;
+            var elHeight = this.el.offsetHeight * this.getInitialZoomFactor() * this.zoomFactor;
+            var maxX = elWidth - this.getContainerX() + this.options.horizontalPadding,
+                maxY = elHeight -  this.getContainerY() + this.options.verticalPadding,
                 maxOffsetX = Math.max(maxX, 0),
                 maxOffsetY = Math.max(maxY, 0),
-                minOffsetX = Math.min(maxX, 0),
-                minOffsetY = Math.min(maxY, 0);
+                minOffsetX = Math.min(maxX, 0) - this.options.horizontalPadding,
+                minOffsetY = Math.min(maxY, 0) - this.options.verticalPadding;
 
             return {
                 x: Math.min(Math.max(offset.x, minOffsetX), maxOffsetX),
@@ -392,6 +394,9 @@ var definePinchZoom = function () {
          * (no offset and zoom factor 1)
          */
         zoomOutAnimation: function () {
+            if (this.zoomFactor === 1) {
+                return;
+            }
             var startZoomFactor = this.zoomFactor,
                 zoomFactor = 1,
                 center = this.getCurrentZoomCenter(),
@@ -447,10 +452,6 @@ var definePinchZoom = function () {
                 x: centerX,
                 y: centerY
             };
-        },
-
-        canDrag: function () {
-            return !isCloseTo(this.zoomFactor, 1);
         },
 
         /**
@@ -711,7 +712,7 @@ var definePinchZoom = function () {
             updateInteraction = function (event) {
                 if (fingers === 2) {
                     setInteraction('zoom');
-                } else if (fingers === 1 && target.canDrag()) {
+                } else if (fingers === 1) {
                     setInteraction('drag', event);
                 } else {
                     setInteraction(null, event);
